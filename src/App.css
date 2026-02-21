@@ -1,0 +1,84 @@
+/* App-specific styles */
+
+* {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+.no-transition {
+  transition: none !important;
+}
+
+aside {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+main {
+  min-height: 100vh;
+}
+
+@media (max-width: 1024px) {
+  main {
+    margin-left: 0 !important;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #0047AB;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #002d6e;
+}
+
+::selection {
+  background: rgba(0, 71, 171, 0.2);
+  color: #002d6e;
+}
+
+*:focus-visible {
+  outline: 2px solid #0047AB;
+  outline-offset: 2px;
+}
+
+@media print {
+  aside {
+    display: none;
+  }
+  
+  main {
+    margin-left: 0 !important;
+  }
+  
+  .blueprint-panel {
+    break-inside: avoid;
+    box-shadow: none;
+    border: 1px solid #ccc;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

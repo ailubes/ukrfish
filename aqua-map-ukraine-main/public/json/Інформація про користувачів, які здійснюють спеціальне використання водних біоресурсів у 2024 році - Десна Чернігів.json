@@ -1,0 +1,382 @@
+{
+  "title": "Інформація про користувачів, які здійснюють спеціальне використання водних біоресурсів у 2024 році",
+  "location": "річка Десна з озерами в межах Чернігівської області",
+  "lots": [
+    {
+      "lot_type": "MIN",
+      "lot_id": "CHDES1MIN2024",
+      "contract": {
+        "winner": "ПРИВАТНЕ ПІДПРИЄМСТВО \"ТРАКТОРОДЕТАЛЬ\", ЄДРПОУ: 33336170",
+        "publication_date": "18.03.2024"
+      },
+      "permit": {
+        "date": "3/20/2024",
+        "number": "ДД-2"
+      },
+      "species_limits": {
+        "Лящ Abramis brama": 1.275,
+        "Судак звичайний Sander lucioperca": 0.1,
+        "Сом європейський Silurus glanis": 0.125,
+        "Щука звичайна Esox lucius": 0.213,
+        "Тараня (плітка звичайна) Rutilus heckelii (Rutilus rutilus)": 0.475,
+        "Плоскирка Blicca bjoerkna": 1.113,
+        "Чехоня Pelecus cultratus": 0.013,
+        "Лин Tinca tinca": 0.163,
+        "Карась сріблястий Carassius gibelio": 1.425,
+        "Синець звичайний Ballerus ballerus": 0.463,
+        "Окунь звичайний Perca fluviatilis": 0.163,
+        "Білизна звичайна Aspius aspius": 0.138,
+        "Сазан Cyprinus carpio": 0.013,
+        "Головень європейський Squalius cephalus": 0.013,
+        "Краснопірка Scardinius, erythrophthalmus": 0.05,
+        "Білоочка (клепець) Ballerus sapa": 0.038,
+        "Рибець звичайний Vimba vimba": 0.013,
+        "Йорж звичайний Gymnocephalus cernua": 0.013,
+        "Верховодка звичайна Alburnus alburnus": 0.238,
+        "Рослиноїдні (білий, строкатий товстолоби, їх гібрид, білий амур) Hypophthalmichthys molitrix, Hypophthalmichthys nobilis, Ctenopharyngodon idella": 0.163,
+        "Рак вузькопалий Astacus leptodactylus": 0.063
+      },
+      "fishing_gear": {
+        "Закидний невід (волок) (крок вічка у матні – 30 мм, приводах – 36 мм, крилах – 40 мм)": 0,
+        "Ятір (крок вічка у бочці, котлі – 30 мм, крилах та дворі – 30 мм)": 6,
+        "Сітка всіх типів (мінімальний крок вічка 30 мм)": 30,
+        "Закидний невід (волок) (крок вічка у матні – 5 мм, крилах – 5 мм)": 1
+      },
+      "vessels": {
+        "vessel_count": 3,
+        "vessel_names": [
+          "ЯЧН 0026",
+          "ЯЧН 0056",
+          "ЯЧН 0057"
+        ]
+      },
+      "tag_ids": []
+    },
+    {
+      "lot_type": null,
+      "lot_id": "CHDES2MIN2024",
+      "contract": {
+        "winner": "ПРИВАТНЕ ПІДПРИЄМСТВО \"ПЕРСПЕКТИВА-Р\", ЄДРПОУ: 44504328",
+        "publication_date": "18.03.2024"
+      },
+      "permit": {
+        "date": "4/2/2024",
+        "number": "ДД-7"
+      },
+      "species_limits": {
+        "Лящ Abramis brama": 1.275,
+        "Судак звичайний Sander lucioperca": 0.1,
+        "Сом європейський Silurus glanis": 0.125,
+        "Щука звичайна Esox lucius": 0.213,
+        "Тараня (плітка звичайна) Rutilus heckelii (Rutilus rutilus)": 0.475,
+        "Плоскирка Blicca bjoerkna": 1.113,
+        "Чехоня Pelecus cultratus": 0.013,
+        "Лин Tinca tinca": 0.163,
+        "Карась сріблястий Carassius gibelio": 1.425,
+        "Синець звичайний Ballerus ballerus": 0.463,
+        "Окунь звичайний Perca fluviatilis": 0.163,
+        "Білизна звичайна Aspius aspius": 0.138,
+        "Сазан Cyprinus carpio": 0.013,
+        "Головень європейський Squalius cephalus": 0.013,
+        "Краснопірка Scardinius, erythrophthalmus": 0.05,
+        "Білоочка (клепець) Ballerus sapa": 0.038,
+        "Рибець звичайний Vimba vimba": 0.013,
+        "Йорж звичайний Gymnocephalus cernua": 0.013,
+        "Верховодка звичайна Alburnus alburnus": 0.238,
+        "Рослиноїдні (білий, строкатий товстолоби, їх гібрид, білий амур) Hypophthalmichthys molitrix, Hypophthalmichthys nobilis, Ctenopharyngodon idella": 0.163,
+        "Рак вузькопалий Astacus leptodactylus": 0.063
+      },
+      "fishing_gear": {
+        "Закидний невід (волок) (крок вічка у матні – 30 мм, приводах – 36 мм, крилах – 40 мм)": 0,
+        "Ятір (крок вічка у бочці, котлі – 30 мм, крилах та дворі – 30 мм)": 6,
+        "Сітка всіх типів (мінімальний крок вічка 30 мм)": 30,
+        "Закидний невід (волок) (крок вічка у матні – 5 мм, крилах – 5 мм)": 1
+      },
+      "vessels": {
+        "vessel_count": 3,
+        "vessel_names": [
+          "UAFT 0003"
+        ]
+      },
+      "tag_ids": []
+    },
+    {
+      "lot_type": null,
+      "lot_id": "CHDES3MIN2024",
+      "contract": {
+        "winner": null,
+        "publication_date": null
+      },
+      "permit": {
+        "date": null,
+        "number": null
+      },
+      "species_limits": {
+        "Лящ Abramis brama": 1.275,
+        "Судак звичайний Sander lucioperca": 0.1,
+        "Сом європейський Silurus glanis": 0.125,
+        "Щука звичайна Esox lucius": 0.213,
+        "Тараня (плітка звичайна) Rutilus heckelii (Rutilus rutilus)": 0.475,
+        "Плоскирка Blicca bjoerkna": 1.113,
+        "Чехоня Pelecus cultratus": 0.013,
+        "Лин Tinca tinca": 0.163,
+        "Карась сріблястий Carassius gibelio": 1.425,
+        "Синець звичайний Ballerus ballerus": 0.463,
+        "Окунь звичайний Perca fluviatilis": 0.163,
+        "Білизна звичайна Aspius aspius": 0.138,
+        "Сазан Cyprinus carpio": 0.013,
+        "Головень європейський Squalius cephalus": 0.013,
+        "Краснопірка Scardinius, erythrophthalmus": 0.05,
+        "Білоочка (клепець) Ballerus sapa": 0.038,
+        "Рибець звичайний Vimba vimba": 0.013,
+        "Йорж звичайний Gymnocephalus cernua": 0.013,
+        "Верховодка звичайна Alburnus alburnus": 0.238,
+        "Рослиноїдні (білий, строкатий товстолоби, їх гібрид, білий амур) Hypophthalmichthys molitrix, Hypophthalmichthys nobilis, Ctenopharyngodon idella": 0.163,
+        "Рак вузькопалий Astacus leptodactylus": 0.063
+      },
+      "fishing_gear": {
+        "Закидний невід (волок) (крок вічка у матні – 30 мм, приводах – 36 мм, крилах – 40 мм)": 0,
+        "Ятір (крок вічка у бочці, котлі – 30 мм, крилах та дворі – 30 мм)": 6,
+        "Сітка всіх типів (мінімальний крок вічка 30 мм)": 30,
+        "Закидний невід (волок) (крок вічка у матні – 5 мм, крилах – 5 мм)": 1
+      },
+      "vessels": {
+        "vessel_count": 3,
+        "vessel_names": []
+      },
+      "tag_ids": []
+    },
+    {
+      "lot_type": null,
+      "lot_id": "CHDES4MIN2024",
+      "contract": {
+        "winner": null,
+        "publication_date": null
+      },
+      "permit": {
+        "date": null,
+        "number": null
+      },
+      "species_limits": {
+        "Лящ Abramis brama": 1.275,
+        "Судак звичайний Sander lucioperca": 0.1,
+        "Сом європейський Silurus glanis": 0.125,
+        "Щука звичайна Esox lucius": 0.213,
+        "Тараня (плітка звичайна) Rutilus heckelii (Rutilus rutilus)": 0.475,
+        "Плоскирка Blicca bjoerkna": 1.113,
+        "Чехоня Pelecus cultratus": 0.013,
+        "Лин Tinca tinca": 0.163,
+        "Карась сріблястий Carassius gibelio": 1.425,
+        "Синець звичайний Ballerus ballerus": 0.463,
+        "Окунь звичайний Perca fluviatilis": 0.163,
+        "Білизна звичайна Aspius aspius": 0.138,
+        "Сазан Cyprinus carpio": 0.013,
+        "Головень європейський Squalius cephalus": 0.013,
+        "Краснопірка Scardinius, erythrophthalmus": 0.05,
+        "Білоочка (клепець) Ballerus sapa": 0.038,
+        "Рибець звичайний Vimba vimba": 0.013,
+        "Йорж звичайний Gymnocephalus cernua": 0.013,
+        "Верховодка звичайна Alburnus alburnus": 0.238,
+        "Рослиноїдні (білий, строкатий товстолоби, їх гібрид, білий амур) Hypophthalmichthys molitrix, Hypophthalmichthys nobilis, Ctenopharyngodon idella": 0.163,
+        "Рак вузькопалий Astacus leptodactylus": 0.063
+      },
+      "fishing_gear": {
+        "Закидний невід (волок) (крок вічка у матні – 30 мм, приводах – 36 мм, крилах – 40 мм)": 0,
+        "Ятір (крок вічка у бочці, котлі – 30 мм, крилах та дворі – 30 мм)": 6,
+        "Сітка всіх типів (мінімальний крок вічка 30 мм)": 30,
+        "Закидний невід (волок) (крок вічка у матні – 5 мм, крилах – 5 мм)": 1
+      },
+      "vessels": {
+        "vessel_count": 3,
+        "vessel_names": []
+      },
+      "tag_ids": []
+    },
+    {
+      "lot_type": null,
+      "lot_id": "CHDES5MIN2024",
+      "contract": {
+        "winner": null,
+        "publication_date": null
+      },
+      "permit": {
+        "date": null,
+        "number": null
+      },
+      "species_limits": {
+        "Лящ Abramis brama": 1.275,
+        "Судак звичайний Sander lucioperca": 0.1,
+        "Сом європейський Silurus glanis": 0.125,
+        "Щука звичайна Esox lucius": 0.213,
+        "Тараня (плітка звичайна) Rutilus heckelii (Rutilus rutilus)": 0.475,
+        "Плоскирка Blicca bjoerkna": 1.113,
+        "Чехоня Pelecus cultratus": 0.013,
+        "Лин Tinca tinca": 0.163,
+        "Карась сріблястий Carassius gibelio": 1.425,
+        "Синець звичайний Ballerus ballerus": 0.463,
+        "Окунь звичайний Perca fluviatilis": 0.163,
+        "Білизна звичайна Aspius aspius": 0.138,
+        "Сазан Cyprinus carpio": 0.013,
+        "Головень європейський Squalius cephalus": 0.013,
+        "Краснопірка Scardinius, erythrophthalmus": 0.05,
+        "Білоочка (клепець) Ballerus sapa": 0.038,
+        "Рибець звичайний Vimba vimba": 0.013,
+        "Йорж звичайний Gymnocephalus cernua": 0.013,
+        "Верховодка звичайна Alburnus alburnus": 0.238,
+        "Рослиноїдні (білий, строкатий товстолоби, їх гібрид, білий амур) Hypophthalmichthys molitrix, Hypophthalmichthys nobilis, Ctenopharyngodon idella": 0.163,
+        "Рак вузькопалий Astacus leptodactylus": 0.063
+      },
+      "fishing_gear": {
+        "Закидний невід (волок) (крок вічка у матні – 30 мм, приводах – 36 мм, крилах – 40 мм)": 1,
+        "Ятір (крок вічка у бочці, котлі – 30 мм, крилах та дворі – 30 мм)": 0,
+        "Сітка всіх типів (мінімальний крок вічка 30 мм)": 30,
+        "Закидний невід (волок) (крок вічка у матні – 5 мм, крилах – 5 мм)": 1
+      },
+      "vessels": {
+        "vessel_count": 3,
+        "vessel_names": []
+      },
+      "tag_ids": []
+    },
+    {
+      "lot_type": null,
+      "lot_id": "CHDES6MIN2024",
+      "contract": {
+        "winner": null,
+        "publication_date": null
+      },
+      "permit": {
+        "date": null,
+        "number": null
+      },
+      "species_limits": {
+        "Лящ Abramis brama": 1.275,
+        "Судак звичайний Sander lucioperca": 0.1,
+        "Сом європейський Silurus glanis": 0.125,
+        "Щука звичайна Esox lucius": 0.213,
+        "Тараня (плітка звичайна) Rutilus heckelii (Rutilus rutilus)": 0.475,
+        "Плоскирка Blicca bjoerkna": 1.113,
+        "Чехоня Pelecus cultratus": 0.013,
+        "Лин Tinca tinca": 0.163,
+        "Карась сріблястий Carassius gibelio": 1.425,
+        "Синець звичайний Ballerus ballerus": 0.463,
+        "Окунь звичайний Perca fluviatilis": 0.163,
+        "Білизна звичайна Aspius aspius": 0.138,
+        "Сазан Cyprinus carpio": 0.013,
+        "Головень європейський Squalius cephalus": 0.013,
+        "Краснопірка Scardinius, erythrophthalmus": 0.05,
+        "Білоочка (клепець) Ballerus sapa": 0.038,
+        "Рибець звичайний Vimba vimba": 0.013,
+        "Йорж звичайний Gymnocephalus cernua": 0.013,
+        "Верховодка звичайна Alburnus alburnus": 0.238,
+        "Рослиноїдні (білий, строкатий товстолоби, їх гібрид, білий амур) Hypophthalmichthys molitrix, Hypophthalmichthys nobilis, Ctenopharyngodon idella": 0.163,
+        "Рак вузькопалий Astacus leptodactylus": 0.063
+      },
+      "fishing_gear": {
+        "Закидний невід (волок) (крок вічка у матні – 30 мм, приводах – 36 мм, крилах – 40 мм)": 1,
+        "Ятір (крок вічка у бочці, котлі – 30 мм, крилах та дворі – 30 мм)": 0,
+        "Сітка всіх типів (мінімальний крок вічка 30 мм)": 30,
+        "Закидний невід (волок) (крок вічка у матні – 5 мм, крилах – 5 мм)": 1
+      },
+      "vessels": {
+        "vessel_count": 3,
+        "vessel_names": []
+      },
+      "tag_ids": []
+    },
+    {
+      "lot_type": null,
+      "lot_id": "CHDES7MIN2024",
+      "contract": {
+        "winner": "ФОП ПРИТИКОВСЬКИЙ МИКОЛА ФЕДОРОВИЧ",
+        "publication_date": "01.07.2024"
+      },
+      "permit": {
+        "date": "7/25/2024",
+        "number": "CHDES7MIN2024-1"
+      },
+      "species_limits": {
+        "Лящ Abramis brama": 1.275,
+        "Судак звичайний Sander lucioperca": 0.1,
+        "Сом європейський Silurus glanis": 0.125,
+        "Щука звичайна Esox lucius": 0.213,
+        "Тараня (плітка звичайна) Rutilus heckelii (Rutilus rutilus)": 0.475,
+        "Плоскирка Blicca bjoerkna": 1.113,
+        "Чехоня Pelecus cultratus": 0.013,
+        "Лин Tinca tinca": 0.163,
+        "Карась сріблястий Carassius gibelio": 1.425,
+        "Синець звичайний Ballerus ballerus": 0.463,
+        "Окунь звичайний Perca fluviatilis": 0.163,
+        "Білизна звичайна Aspius aspius": 0.138,
+        "Сазан Cyprinus carpio": 0.013,
+        "Головень європейський Squalius cephalus": 0.013,
+        "Краснопірка Scardinius, erythrophthalmus": 0.05,
+        "Білоочка (клепець) Ballerus sapa": 0.038,
+        "Рибець звичайний Vimba vimba": 0.013,
+        "Йорж звичайний Gymnocephalus cernua": 0.013,
+        "Верховодка звичайна Alburnus alburnus": 0.238,
+        "Рослиноїдні (білий, строкатий товстолоби, їх гібрид, білий амур) Hypophthalmichthys molitrix, Hypophthalmichthys nobilis, Ctenopharyngodon idella": 0.163,
+        "Рак вузькопалий Astacus leptodactylus": 0.063
+      },
+      "fishing_gear": {
+        "Закидний невід (волок) (крок вічка у матні – 30 мм, приводах – 36 мм, крилах – 40 мм)": 0,
+        "Ятір (крок вічка у бочці, котлі – 30 мм, крилах та дворі – 30 мм)": 6,
+        "Сітка всіх типів (мінімальний крок вічка 30 мм)": 30,
+        "Закидний невід (волок) (крок вічка у матні – 5 мм, крилах – 5 мм)": 1
+      },
+      "vessels": {
+        "vessel_count": 3,
+        "vessel_names": [
+          "ЯЧН 9280"
+        ]
+      },
+      "tag_ids": []
+    },
+    {
+      "lot_type": null,
+      "lot_id": "CHDES8MIN2024",
+      "contract": {
+        "winner": null,
+        "publication_date": null
+      },
+      "permit": {
+        "date": null,
+        "number": null
+      },
+      "species_limits": {
+        "Лящ Abramis brama": 1.275,
+        "Судак звичайний Sander lucioperca": 0.1,
+        "Сом європейський Silurus glanis": 0.125,
+        "Щука звичайна Esox lucius": 0.209,
+        "Тараня (плітка звичайна) Rutilus heckelii (Rutilus rutilus)": 0.475,
+        "Плоскирка Blicca bjoerkna": 1.109,
+        "Чехоня Pelecus cultratus": 0.009,
+        "Лин Tinca tinca": 0.159,
+        "Карась сріблястий Carassius gibelio": 1.425,
+        "Синець звичайний Ballerus ballerus": 0.459,
+        "Окунь звичайний Perca fluviatilis": 0.159,
+        "Білизна звичайна Aspius aspius": 0.134,
+        "Сазан Cyprinus carpio": 0.009,
+        "Головень європейський Squalius cephalus": 0.009,
+        "Краснопірка Scardinius, erythrophthalmus": 0.05,
+        "Білоочка (клепець) Ballerus sapa": 0.034,
+        "Рибець звичайний Vimba vimba": 0.009,
+        "Йорж звичайний Gymnocephalus cernua": 0.009,
+        "Верховодка звичайна Alburnus alburnus": 0.234,
+        "Рослиноїдні (білий, строкатий товстолоби, їх гібрид, білий амур) Hypophthalmichthys molitrix, Hypophthalmichthys nobilis, Ctenopharyngodon idella": 0.159,
+        "Рак вузькопалий Astacus leptodactylus": 0.059
+      },
+      "fishing_gear": {
+        "Закидний невід (волок) (крок вічка у матні – 30 мм, приводах – 36 мм, крилах – 40 мм)": 0,
+        "Ятір (крок вічка у бочці, котлі – 30 мм, крилах та дворі – 30 мм)": 6,
+        "Сітка всіх типів (мінімальний крок вічка 30 мм)": 30,
+        "Закидний невід (волок) (крок вічка у матні – 5 мм, крилах – 5 мм)": 1
+      },
+      "vessels": {
+        "vessel_count": 3,
+        "vessel_names": []
+      },
+      "tag_ids": []
+    }
+  ]
+}

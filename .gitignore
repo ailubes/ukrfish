@@ -1,0 +1,16 @@
+node_modules/
+.next/
+dist/
+coverage/
+error.md
+
+.env
+.env.*
+!.env.example
+
+*.log
+*.tsbuildinfo
+
+aqua-map-ukraine-main/dist-server/
+
+.DS_Store
