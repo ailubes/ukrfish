@@ -12,7 +12,8 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio",
-    "prisma:seed": "node prisma/seed.mjs"
+    "prisma:seed": "node prisma/seed.mjs",
+    "billing:mark-overdue": "node scripts/mark-overdue-invoices.mjs"
   },
   "prisma": {
     "seed": "node prisma/seed.mjs"

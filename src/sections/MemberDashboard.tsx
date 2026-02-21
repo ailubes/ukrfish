@@ -9,6 +9,7 @@ import {
   type MembershipFeatureCode,
   type MembershipPlanCode,
 } from '../lib/membership'
+import { formatMoneyUahFromMinor, statusLabelUk } from '../lib/billing'
 
 type UserRole = 'USER' | 'ADMIN' | 'SUPERADMIN'
 
@@ -46,6 +47,35 @@ interface MemberDashboardProps {
   currentUser: CurrentUser | null
 }
 
+interface MyInvoiceItem {
+  id: string
+  number: string
+  status: string
+  billingCycle: 'MONTHLY' | 'QUARTERLY' | 'YEARLY' | null
+  amountMinor: number
+  paidMinor: number
+  dueAt: string | null
+  membership: {
+    plan: {
+      name: string
+      code: MembershipPlanCode
+    }
+  } | null
+}
+
+interface MyPaymentItem {
+  id: string
+  status: string
+  method: string
+  amountMinor: number
+  paidAt: string | null
+  payerReference: string | null
+  invoice: {
+    id: string
+    number: string
+  }
+}
+
 const ALL_FEATURES = Object.keys(MEMBERSHIP_FEATURE_LABELS) as MembershipFeatureCode[]
 
 const ROLE_LABELS: Record<UserRole, string> = {
@@ -81,6 +111,8 @@ function getRoleBadgeClass(role: UserRole): string {
 
 export default function MemberDashboard({ currentUser }: MemberDashboardProps) {
   const [data, setData] = useState<MembershipPayload | null>(null)
+  const [invoices, setInvoices] = useState<MyInvoiceItem[]>([])
+  const [payments, setPayments] = useState<MyPaymentItem[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
 
@@ -90,20 +122,43 @@ export default function MemberDashboard({ currentUser }: MemberDashboardProps) {
     setIsLoading(true)
     setError('')
 
-    void fetch('/api/me/membership', {
-      method: 'GET',
-      credentials: 'same-origin',
-      cache: 'no-store',
-    })
-      .then(async (response) => {
+    void Promise.all([
+      fetch('/api/me/membership', {
+        method: 'GET',
+        credentials: 'same-origin',
+        cache: 'no-store',
+      }).then(async (response) => {
         if (!response.ok) {
           throw new Error('Не вдалося завантажити дані членства.')
         }
         return response.json() as Promise<MembershipPayload>
-      })
-      .then((payload) => {
+      }),
+      fetch('/api/me/invoices', {
+        method: 'GET',
+        credentials: 'same-origin',
+        cache: 'no-store',
+      }).then(async (response) => {
+        if (!response.ok) {
+          return { invoices: [] as MyInvoiceItem[] }
+        }
+        return response.json() as Promise<{ invoices: MyInvoiceItem[] }>
+      }),
+      fetch('/api/me/payments', {
+        method: 'GET',
+        credentials: 'same-origin',
+        cache: 'no-store',
+      }).then(async (response) => {
+        if (!response.ok) {
+          return { payments: [] as MyPaymentItem[] }
+        }
+        return response.json() as Promise<{ payments: MyPaymentItem[] }>
+      }),
+    ])
+      .then(([membershipPayload, invoicesPayload, paymentsPayload]) => {
         if (!cancelled) {
-          setData(payload)
+          setData(membershipPayload)
+          setInvoices(invoicesPayload.invoices || [])
+          setPayments(paymentsPayload.payments || [])
         }
       })
       .catch(() => {
@@ -205,7 +260,7 @@ export default function MemberDashboard({ currentUser }: MemberDashboardProps) {
               <p className="text-sm text-[#002d6e]">Керуйте користувачами, ролями та заявками на членство.</p>
             </div>
             <Link href="/admin/users" className="inline-flex items-center justify-center rounded border border-[#0047AB] px-4 py-2 text-sm font-medium text-[#0047AB] transition-colors hover:bg-[#0047AB] hover:text-white">
-              Відкрити Admin Dashboard
+              Відкрити адмін-панель
             </Link>
           </div>
         </div>
@@ -257,6 +312,55 @@ export default function MemberDashboard({ currentUser }: MemberDashboardProps) {
           </Link>
         </div>
       )}
+
+      <div className="blueprint-panel mb-8">
+        <div className="panel-title">
+          <span>МОЇ РАХУНКИ</span>
+        </div>
+        {invoices.length === 0 ? (
+          <p className="text-sm text-gray-600">У вас ще немає рахунків на оплату.</p>
+        ) : (
+          <div className="space-y-2">
+            {invoices.slice(0, 8).map((invoice) => (
+              <div key={invoice.id} className="flex flex-col justify-between gap-2 border border-[#0047AB]/15 p-3 lg:flex-row lg:items-center">
+                <div>
+                  <p className="font-mono text-xs text-[#002d6e]">{invoice.number}</p>
+                  <p className="text-sm text-gray-700">{invoice.membership?.plan.name ?? 'План не задано'}</p>
+                </div>
+                <div className="text-sm text-gray-700">
+                  <p>Сума: {formatMoneyUahFromMinor(invoice.amountMinor)}</p>
+                  <p>Сплачено: {formatMoneyUahFromMinor(invoice.paidMinor)}</p>
+                </div>
+                <div className="text-sm text-gray-700">
+                  <p>Статус: {statusLabelUk(invoice.status)}</p>
+                  <p>До: {invoice.dueAt ? new Date(invoice.dueAt).toLocaleDateString('uk-UA') : '—'}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="blueprint-panel">
+        <div className="panel-title">
+          <span>МОЇ ПЛАТЕЖІ</span>
+        </div>
+        <p className="mb-3 text-xs text-gray-500">Річний рахунок розраховується як 10 місяців замість 12.</p>
+        {payments.length === 0 ? (
+          <p className="text-sm text-gray-600">Платежі ще не зафіксовані.</p>
+        ) : (
+          <div className="space-y-2">
+            {payments.slice(0, 8).map((payment) => (
+              <div key={payment.id} className="flex flex-col justify-between gap-2 border border-[#0047AB]/15 p-3 lg:flex-row lg:items-center">
+                <p className="font-mono text-xs text-[#002d6e]">{payment.invoice.number}</p>
+                <p className="text-sm text-gray-700">{formatMoneyUahFromMinor(payment.amountMinor)}</p>
+                <p className="text-sm text-gray-700">{statusLabelUk(payment.status)}</p>
+                <p className="text-xs text-gray-500">{payment.paidAt ? new Date(payment.paidAt).toLocaleDateString('uk-UA') : '—'}</p>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   )
 }

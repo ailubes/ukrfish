@@ -43,6 +43,48 @@ enum MembershipEventType {
   EXPIRED
 }
 
+enum InvoiceStatus {
+  DRAFT
+  ISSUED
+  PARTIALLY_PAID
+  PAID
+  OVERDUE
+  CANCELED
+  VOID
+}
+
+enum InvoiceType {
+  MEMBERSHIP_FEE
+  ADJUSTMENT
+  PENALTY
+  OTHER
+}
+
+enum PaymentStatus {
+  PENDING
+  CONFIRMED
+  REJECTED
+  FAILED
+  REFUNDED
+}
+
+enum PaymentMethod {
+  BANK_TRANSFER
+  CARD
+  CASHLESS
+  OTHER
+}
+
+enum BillingEventType {
+  INVOICE_CREATED
+  INVOICE_ISSUED
+  INVOICE_CANCELED
+  INVOICE_VOIDED
+  PAYMENT_RECORDED
+  PAYMENT_CONFIRMED
+  PAYMENT_REJECTED
+}
+
 model User {
   id            String   @id @default(cuid())
   email         String   @unique
@@ -60,6 +102,11 @@ model User {
   memberships         Membership[]      @relation("MembershipSubjectUser")
   approvedMemberships Membership[]      @relation("MembershipApprovedBy")
   membershipEvents    MembershipEvent[] @relation("MembershipEventActor")
+  invoices            Invoice[]         @relation("InvoiceSubjectUser")
+  createdInvoices     Invoice[]         @relation("InvoiceCreatedBy")
+  updatedInvoices     Invoice[]         @relation("InvoiceUpdatedBy")
+  confirmedPayments   Payment[]         @relation("PaymentConfirmedBy")
+  billingEvents       BillingEvent[]    @relation("BillingEventActor")
 }
 
 model Organization {
@@ -70,6 +117,7 @@ model Organization {
 
   members     OrganizationMember[]
   memberships Membership[]
+  invoices    Invoice[]
 }
 
 model OrganizationMember {
@@ -139,6 +187,7 @@ model Membership {
   plan         MembershipPlan @relation(fields: [planId], references: [id], onDelete: Restrict)
   approvedBy   User?          @relation("MembershipApprovedBy", fields: [approvedById], references: [id], onDelete: SetNull)
   events       MembershipEvent[]
+  invoices     Invoice[]
 
   @@index([userId, status, createdAt])
   @@index([organizationId, status])
@@ -156,6 +205,86 @@ model MembershipEvent {
   actor      User?      @relation("MembershipEventActor", fields: [actorId], references: [id], onDelete: SetNull)
 
   @@index([membershipId, createdAt])
+}
+
+model Invoice {
+  id             String                 @id @default(cuid())
+  number         String                 @unique
+  status         InvoiceStatus          @default(DRAFT)
+  type           InvoiceType            @default(MEMBERSHIP_FEE)
+  userId         String
+  membershipId   String?
+  organizationId String?
+  billingCycle   MembershipBillingCycle?
+  currency       String                 @default("UAH")
+  amountMinor    Int
+  paidMinor      Int                    @default(0)
+  issuedAt       DateTime?
+  dueAt          DateTime?
+  paidAt         DateTime?
+  note           String?
+  metadata       Json?
+  createdById    String?
+  updatedById    String?
+  createdAt      DateTime               @default(now())
+  updatedAt      DateTime               @updatedAt
+
+  user         User          @relation("InvoiceSubjectUser", fields: [userId], references: [id], onDelete: Cascade)
+  membership   Membership?   @relation(fields: [membershipId], references: [id], onDelete: SetNull)
+  organization Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  createdBy    User?         @relation("InvoiceCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  updatedBy    User?         @relation("InvoiceUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
+  payments     Payment[]
+  events       BillingEvent[]
+
+  @@index([status, dueAt])
+  @@index([userId, createdAt])
+  @@index([membershipId, createdAt])
+}
+
+model Payment {
+  id                String        @id @default(cuid())
+  invoiceId         String
+  status            PaymentStatus @default(PENDING)
+  method            PaymentMethod @default(BANK_TRANSFER)
+  amountMinor       Int
+  currency          String        @default("UAH")
+  provider          String?
+  providerPaymentId String?
+  payerReference    String?
+  proofNote         String?
+  paidAt            DateTime?
+  confirmedAt       DateTime?
+  confirmedById     String?
+  metadata          Json?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  invoice     Invoice        @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  confirmedBy User?          @relation("PaymentConfirmedBy", fields: [confirmedById], references: [id], onDelete: SetNull)
+  events      BillingEvent[]
+
+  @@index([invoiceId, createdAt])
+  @@index([status, paidAt])
+  @@unique([provider, providerPaymentId])
+}
+
+model BillingEvent {
+  id        String           @id @default(cuid())
+  invoiceId String?
+  paymentId String?
+  actorId   String?
+  type      BillingEventType
+  note      String?
+  createdAt DateTime         @default(now())
+
+  invoice Invoice? @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  payment Payment? @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+  actor   User?    @relation("BillingEventActor", fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([invoiceId, createdAt])
+  @@index([paymentId, createdAt])
+  @@index([actorId, createdAt])
 }
 
 model Account {
