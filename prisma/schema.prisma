@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "windows", "debian-openssl-3.0.x"]
 }
 
 datasource db {
@@ -10,6 +11,7 @@ datasource db {
 enum OrganizationRole {
   OWNER
   ADMIN
+  MARKETPLACE_MANAGER
   MEMBER
 }
 
@@ -85,6 +87,36 @@ enum BillingEventType {
   PAYMENT_REJECTED
 }
 
+enum OrganizationProfileStatus {
+  DRAFT
+  SUBMITTED
+  VERIFIED
+}
+
+enum OrganizationEntityType {
+  FOP
+  COMPANY
+  GOVERNMENT
+  SCIENTIFIC
+  LAWMAKER
+}
+
+enum MarketplaceListingType {
+  GOOD
+  SERVICE
+}
+
+enum MarketplaceListingStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum MarketplaceArchiveReason {
+  MANUAL
+  BILLING_SUSPENDED
+}
+
 model User {
   id            String   @id @default(cuid())
   email         String   @unique
@@ -93,6 +125,7 @@ model User {
   image         String?
   passwordHash  String?
   role          UserRole @default(USER)
+  deletedAt     DateTime?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
@@ -107,17 +140,57 @@ model User {
   updatedInvoices     Invoice[]         @relation("InvoiceUpdatedBy")
   confirmedPayments   Payment[]         @relation("PaymentConfirmedBy")
   billingEvents       BillingEvent[]    @relation("BillingEventActor")
+  approvedOrganizations Organization[]  @relation("OrganizationApprovedBy")
 }
 
 model Organization {
-  id        String   @id @default(cuid())
-  name      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                  String                    @id @default(cuid())
+  name                String
+  entityType          OrganizationEntityType    @default(COMPANY)
+  legalName           String?
+  slug                String?                   @unique
+  logoUrl             String?
+  logoAlt             String?
+  profileStatus       OrganizationProfileStatus @default(DRAFT)
+  isPublicProfile     Boolean                   @default(false)
+  isPublicContacts    Boolean                   @default(false)
+  isPublicMarketplace Boolean                   @default(false)
+  legalAddress        String?
+  postalAddress       String?
+  edrpou              String?
+  vatNumber           String?
+  iban                String?
+  bankName            String?
+  mfo                 String?
+  signatoryName       String?
+  signatoryPosition   String?
+  contactName         String?
+  contactRole         String?
+  contactEmail        String?
+  contactPhone        String?
+  websiteUrl          String?
+  facebookUrl         String?
+  instagramUrl        String?
+  linkedinUrl         String?
+  youtubeUrl          String?
+  telegramUrl         String?
+  description         String?
+  offersSummary       String?
+  kvedCodes           String?
+  approvedById        String?
+  approvedAt          DateTime?
+  createdAt           DateTime                  @default(now())
+  updatedAt           DateTime                  @updatedAt
+  deletedAt           DateTime?
 
   members     OrganizationMember[]
   memberships Membership[]
   invoices    Invoice[]
+  listings    MarketplaceListing[]
+  approvedBy  User?                    @relation("OrganizationApprovedBy", fields: [approvedById], references: [id], onDelete: SetNull)
+
+  @@index([slug])
+  @@index([profileStatus, isPublicProfile])
 }
 
 model OrganizationMember {
@@ -138,7 +211,10 @@ model MembershipPlan {
   name            String
   description     String
   monthlyPriceUah Int
+  yearlyFreeMonths Int     @default(2)
+  organizationUserLimit Int @default(1)
   isActive        Boolean  @default(true)
+  deletedAt       DateTime?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
@@ -285,6 +361,60 @@ model BillingEvent {
   @@index([invoiceId, createdAt])
   @@index([paymentId, createdAt])
   @@index([actorId, createdAt])
+}
+
+model BillingIssuerSettings {
+  id                String   @id @default("default")
+  legalName         String
+  shortName         String
+  legalAddress      String
+  edrpou            String
+  iban              String
+  bankName          String
+  mfo               String?
+  vatNumber         String?
+  signatoryName     String?
+  signatoryPosition String?
+  email             String?
+  phone             String?
+  website           String?
+  updatedAt         DateTime @updatedAt
+  createdAt         DateTime @default(now())
+}
+
+model MarketplaceListing {
+  id               String                  @id @default(cuid())
+  organizationId   String
+  title            String
+  slug             String
+  type             MarketplaceListingType
+  status           MarketplaceListingStatus @default(DRAFT)
+  shortDescription String?
+  description      String
+  priceMinor       Int?
+  currency         String                  @default("UAH")
+  unit             String?
+  minimumOrder     String?
+  location         String?
+  contactName      String?
+  contactPhone     String?
+  contactEmail     String?
+  websiteUrl       String?
+  coverImageUrl    String?
+  isPublic         Boolean                 @default(true)
+  publishedAt      DateTime?
+  archivedReason   MarketplaceArchiveReason?
+  lastPublicStatusBeforeSuspend MarketplaceListingStatus?
+  billingSuspendedAt DateTime?
+  createdAt        DateTime                @default(now())
+  updatedAt        DateTime                @updatedAt
+  deletedAt        DateTime?
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, slug])
+  @@index([status, publishedAt])
+  @@index([organizationId, status])
 }
 
 model Account {

@@ -1,10 +1,12 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { type InvoiceStatus, type MembershipBillingCycle, type PaymentStatus } from '@prisma/client'
+import { type InvoiceStatus, type MembershipBillingCycle, type PaymentStatus, type Prisma } from '@prisma/client'
 import { z } from 'zod'
 import { calculateInvoiceAmountMinor } from '@/lib/billing'
 import { getAdminContext } from '@/lib/admin-auth'
+import { normalizeOptional, requireBillingIssuerSettings, sanitizeIban, toIssuerSnapshot } from '@/lib/billing-issuer'
+import { ensureInitialMembershipInvoice, nextInvoiceNumber } from '@/lib/invoice'
 import { prisma } from '@/lib/prisma'
 
 const updateUserRoleSchema = z.object({
@@ -56,24 +58,21 @@ const paymentDecisionSchema = z.object({
   note: z.string().max(1000).optional(),
 })
 
-function invoiceNumberFromDate(date: Date, sequence: number): string {
-  const year = date.getFullYear()
-  return `UKRF-${year}-${String(sequence).padStart(6, '0')}`
-}
-
-async function nextInvoiceNumber(): Promise<string> {
-  const now = new Date()
-  const yearPrefix = `UKRF-${now.getFullYear()}-`
-  const count = await prisma.invoice.count({
-    where: {
-      number: {
-        startsWith: yearPrefix,
-      },
-    },
-  })
-
-  return invoiceNumberFromDate(now, count + 1)
-}
+const billingIssuerSettingsSchema = z.object({
+  legalName: z.string().trim().min(2).max(200),
+  shortName: z.string().trim().min(2).max(120),
+  legalAddress: z.string().trim().min(5).max(500),
+  edrpou: z.string().trim().regex(/^\d{8,10}$/),
+  iban: z.string().trim().regex(/^[A-Z]{2}[0-9A-Z]{13,32}$/),
+  bankName: z.string().trim().min(2).max(200),
+  mfo: z.string().trim().max(20).optional(),
+  vatNumber: z.string().trim().max(40).optional(),
+  signatoryName: z.string().trim().max(200).optional(),
+  signatoryPosition: z.string().trim().max(200).optional(),
+  email: z.string().trim().email().optional(),
+  phone: z.string().trim().max(50).optional(),
+  website: z.string().trim().url().optional(),
+})
 
 function normalizeInvoiceStatus(current: InvoiceStatus, paidMinor: number, amountMinor: number): InvoiceStatus {
   if (current === 'CANCELED' || current === 'VOID') {
@@ -154,6 +153,86 @@ export async function updateUserRoleAction(formData: FormData) {
   revalidatePath('/admin/users')
 }
 
+export async function upsertBillingIssuerSettingsAction(formData: FormData) {
+  const admin = await getAdminContext()
+  if (admin.kind !== 'authorized') {
+    throw new Error('Unauthorized')
+  }
+
+  const parsed = billingIssuerSettingsSchema.safeParse({
+    legalName: String(formData.get('legalName') ?? ''),
+    shortName: String(formData.get('shortName') ?? ''),
+    legalAddress: String(formData.get('legalAddress') ?? ''),
+    edrpou: String(formData.get('edrpou') ?? ''),
+    iban: sanitizeIban(String(formData.get('iban') ?? '')),
+    bankName: String(formData.get('bankName') ?? ''),
+    mfo: String(formData.get('mfo') ?? '').trim() || undefined,
+    vatNumber: String(formData.get('vatNumber') ?? '').trim() || undefined,
+    signatoryName: String(formData.get('signatoryName') ?? '').trim() || undefined,
+    signatoryPosition: String(formData.get('signatoryPosition') ?? '').trim() || undefined,
+    email: String(formData.get('email') ?? '').trim() || undefined,
+    phone: String(formData.get('phone') ?? '').trim() || undefined,
+    website: String(formData.get('website') ?? '').trim() || undefined,
+  })
+
+  if (!parsed.success) {
+    throw new Error('Invalid billing issuer settings payload')
+  }
+
+  await prisma.$executeRaw`
+    INSERT INTO "BillingIssuerSettings" (
+      "id",
+      "legalName",
+      "shortName",
+      "legalAddress",
+      "edrpou",
+      "iban",
+      "bankName",
+      "mfo",
+      "vatNumber",
+      "signatoryName",
+      "signatoryPosition",
+      "email",
+      "phone",
+      "website",
+      "updatedAt"
+    ) VALUES (
+      'default',
+      ${parsed.data.legalName},
+      ${parsed.data.shortName},
+      ${parsed.data.legalAddress},
+      ${parsed.data.edrpou},
+      ${parsed.data.iban},
+      ${parsed.data.bankName},
+      ${normalizeOptional(parsed.data.mfo)},
+      ${normalizeOptional(parsed.data.vatNumber)},
+      ${normalizeOptional(parsed.data.signatoryName)},
+      ${normalizeOptional(parsed.data.signatoryPosition)},
+      ${normalizeOptional(parsed.data.email)},
+      ${normalizeOptional(parsed.data.phone)},
+      ${normalizeOptional(parsed.data.website)},
+      NOW()
+    )
+    ON CONFLICT ("id") DO UPDATE SET
+      "legalName" = EXCLUDED."legalName",
+      "shortName" = EXCLUDED."shortName",
+      "legalAddress" = EXCLUDED."legalAddress",
+      "edrpou" = EXCLUDED."edrpou",
+      "iban" = EXCLUDED."iban",
+      "bankName" = EXCLUDED."bankName",
+      "mfo" = EXCLUDED."mfo",
+      "vatNumber" = EXCLUDED."vatNumber",
+      "signatoryName" = EXCLUDED."signatoryName",
+      "signatoryPosition" = EXCLUDED."signatoryPosition",
+      "email" = EXCLUDED."email",
+      "phone" = EXCLUDED."phone",
+      "website" = EXCLUDED."website",
+      "updatedAt" = NOW()
+  `
+
+  revalidatePath('/admin/settings')
+}
+
 export async function updateMembershipStatusAction(formData: FormData) {
   const admin = await getAdminContext()
   if (admin.kind !== 'authorized') {
@@ -175,6 +254,10 @@ export async function updateMembershipStatusAction(formData: FormData) {
 
   if (!membership) {
     throw new Error('Membership not found')
+  }
+
+  if (parsed.data.status === 'ACTIVE') {
+    await requireBillingIssuerSettings()
   }
 
   await prisma.membership.update({
@@ -207,8 +290,16 @@ export async function updateMembershipStatusAction(formData: FormData) {
     },
   })
 
+  if (parsed.data.status === 'ACTIVE') {
+    await ensureInitialMembershipInvoice({
+      membershipId: membership.id,
+      actorId: admin.context.user.id,
+    })
+  }
+
   revalidatePath('/admin/memberships')
   revalidatePath('/admin/users')
+  revalidatePath('/admin/invoices')
 }
 
 export async function updateMembershipPlanAction(formData: FormData) {
@@ -320,8 +411,14 @@ export async function createInvoiceAction(formData: FormData) {
   }
 
   const cycle = parsed.data.billingCycle as MembershipBillingCycle
-  const amountMinor = calculateInvoiceAmountMinor(membership.plan.monthlyPriceUah, cycle)
+  const amountMinor = calculateInvoiceAmountMinor(
+    membership.plan.monthlyPriceUah,
+    cycle,
+    membership.plan.yearlyFreeMonths,
+  )
   const number = await nextInvoiceNumber()
+  const issuerSettings = await requireBillingIssuerSettings()
+  const issuerSnapshot = toIssuerSnapshot(issuerSettings)
 
   const invoice = await prisma.invoice.create({
     data: {
@@ -336,6 +433,9 @@ export async function createInvoiceAction(formData: FormData) {
       dueAt: new Date(parsed.data.dueAt),
       issuedAt: new Date(),
       note: parsed.data.note || null,
+      metadata: {
+        issuer: issuerSnapshot,
+      } as unknown as Prisma.InputJsonValue,
       createdById: admin.context.user.id,
     },
   })

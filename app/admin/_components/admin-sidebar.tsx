@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { type ComponentType } from 'react'
-import { BadgeCheck, CreditCard, FileText, HelpCircle, Layers3, LayoutDashboard, Shield, Users, Wallet } from 'lucide-react'
+import { BadgeCheck, Building2, CreditCard, FileText, HelpCircle, Layers3, LayoutDashboard, Settings, Shield, Store, Users, Wallet } from 'lucide-react'
 
 type NavItem = {
   href: string
@@ -15,9 +15,12 @@ const navItems: NavItem[] = [
   { href: '/admin/users', label: 'Користувачі', icon: Users },
   { href: '/admin/roles', label: 'Ролі', icon: Shield },
   { href: '/admin/memberships', label: 'Членства', icon: BadgeCheck },
+  { href: '/admin/organizations', label: 'Організації', icon: Building2 },
+  { href: '/admin/marketplace', label: 'Маркетплейс', icon: Store },
   { href: '/admin/plans', label: 'Плани', icon: Layers3 },
   { href: '/admin/invoices', label: 'Рахунки', icon: FileText },
   { href: '/admin/payments', label: 'Платежі', icon: Wallet },
+  { href: '/admin/settings', label: 'Налаштування', icon: Settings },
   { href: '/admin/help', label: 'Допомога', icon: HelpCircle },
 ]
 
