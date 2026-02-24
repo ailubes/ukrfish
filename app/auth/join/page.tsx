@@ -1,15 +1,17 @@
 import { JoinSignUpForm } from '@/components/auth/JoinSignUpForm'
+import { redirect } from 'next/navigation'
+import { auth } from '@/lib/auth'
+import { prisma } from '@/lib/prisma'
 
-type PlanCode = 'start' | 'professional' | 'investor'
-
-function normalizePlanCode(rawPlanCode: string | undefined): PlanCode {
-  if (rawPlanCode === 'professional' || rawPlanCode === 'investor') {
+function resolvePlanCode(rawPlanCode: string | undefined, availablePlanCodes: string[]): string {
+  if (rawPlanCode && availablePlanCodes.includes(rawPlanCode)) {
     return rawPlanCode
   }
-  return 'start'
+
+  return availablePlanCodes[0] ?? ''
 }
 
-function normalizeCallbackUrl(callbackUrl: string | undefined, planCode: PlanCode): string {
+function normalizeCallbackUrl(callbackUrl: string | undefined, planCode: string): string {
   const fallback = `/membership/apply?plan=${planCode}`
   if (!callbackUrl) {
     return fallback
@@ -30,9 +32,32 @@ interface JoinPageProps {
 }
 
 export default async function JoinPage({ searchParams }: JoinPageProps) {
+  const session = await auth()
   const params = searchParams ? await searchParams : undefined
-  const planCode = normalizePlanCode(params?.plan)
+  const plans = await prisma.membershipPlan.findMany({
+    where: {
+      isActive: true,
+      deletedAt: null,
+      code: { in: ['start', 'professional', 'investor'] },
+    },
+    orderBy: { monthlyPriceUah: 'asc' },
+    select: { code: true, name: true, monthlyPriceUah: true, yearlyFreeMonths: true },
+  })
+
+  if (plans.length === 0) {
+    throw new Error('No active membership plans available')
+  }
+
+  const planCode = resolvePlanCode(
+    params?.plan,
+    plans.map((plan) => plan.code),
+  )
+  const selectedPlan = plans.find((plan) => plan.code === planCode) ?? plans[0]
   const callbackUrl = normalizeCallbackUrl(params?.callbackUrl, planCode)
 
-  return <JoinSignUpForm planCode={planCode} callbackUrl={callbackUrl} />
+  if (session?.user?.id) {
+    redirect(callbackUrl)
+  }
+
+  return <JoinSignUpForm planName={selectedPlan.name} monthlyPriceUah={selectedPlan.monthlyPriceUah} yearlyFreeMonths={selectedPlan.yearlyFreeMonths} callbackUrl={callbackUrl} />
 }

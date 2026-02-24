@@ -1,5 +1,5 @@
 import type { Section } from '../App'
-import { House, LayoutDashboard, Info, Briefcase, Users, Newspaper, Mail, Map, UserRoundCog, Shield } from 'lucide-react'
+import { House, LayoutDashboard, Info, Briefcase, Users, Newspaper, Mail, Map, UserRoundCog, Shield, Store } from 'lucide-react'
 
 interface SidebarProps {
   activeSection: Section
@@ -17,6 +17,7 @@ const navItems: { id: Section; label: string; icon: typeof LayoutDashboard }[] =
   { id: 'about', label: 'Про нас', icon: Info },
   { id: 'activities', label: 'Діяльність', icon: Briefcase },
   { id: 'membership', label: 'Членство', icon: Users },
+  { id: 'marketplace', label: 'Маркетплейс', icon: Store },
   { id: 'cabinet', label: 'Кабінет', icon: UserRoundCog },
   { id: 'news', label: 'Новини', icon: Newspaper },
   { id: 'contact', label: 'Контакт', icon: Mail },

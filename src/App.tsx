@@ -15,7 +15,7 @@ import MapSection from './sections/MapSection'
 import { fetchWpPostById } from './lib/wp'
 import { type MembershipPlanCode } from './lib/membership'
 
-export type Section = 'landing' | 'dashboard' | 'about' | 'activities' | 'membership' | 'cabinet' | 'news' | 'contact' | 'map'
+export type Section = 'landing' | 'dashboard' | 'about' | 'activities' | 'membership' | 'marketplace' | 'cabinet' | 'news' | 'contact' | 'map'
 
 interface ParsedRoute {
   section: Section
@@ -41,6 +41,7 @@ const SECTION_TO_PATH: Record<Section, string> = {
   about: '/about',
   activities: '/activities',
   membership: '/membership',
+  marketplace: '/marketplace',
   cabinet: '/cabinet',
   news: '/news',
   contact: '/contact',
@@ -234,6 +235,11 @@ function App() {
       return
     }
 
+    if (section === 'marketplace') {
+      window.location.assign('/marketplace')
+      return
+    }
+
     const path = SECTION_TO_PATH[section]
     window.history.pushState({}, '', path)
     setActiveSection(section)
@@ -258,10 +264,15 @@ function App() {
   }, [])
 
   const selectMembershipPlan = useCallback((planCode: MembershipPlanCode) => {
-    const callbackUrl = `/membership/apply?plan=${encodeURIComponent(planCode)}`
-    const target = `/auth/join?plan=${encodeURIComponent(planCode)}&callbackUrl=${encodeURIComponent(callbackUrl)}`
-    window.location.assign(target)
-  }, [])
+    const applyTarget = `/membership/apply?plan=${encodeURIComponent(planCode)}`
+    if (authState === 'authenticated') {
+      window.location.assign(applyTarget)
+      return
+    }
+
+    const joinTarget = `/auth/join?plan=${encodeURIComponent(planCode)}&callbackUrl=${encodeURIComponent(applyTarget)}`
+    window.location.assign(joinTarget)
+  }, [authState])
 
   const renderSection = () => {
     switch (activeSection) {
@@ -275,6 +286,14 @@ function App() {
         return <Activities />
       case 'membership':
         return <Membership onSelectPlan={selectMembershipPlan} />
+      case 'marketplace':
+        return (
+          <div className="p-6 lg:p-8">
+            <div className="blueprint-panel">
+              <p className="text-gray-600">Відкриваємо маркетплейс...</p>
+            </div>
+          </div>
+        )
       case 'cabinet':
         if (authState !== 'authenticated') {
           return (
