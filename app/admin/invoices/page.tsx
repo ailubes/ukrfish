@@ -2,7 +2,7 @@ import { requireAdminPage } from '@/lib/admin-auth'
 import { cycleLabelUk, formatMoneyUahFromMinor, statusLabelUk } from '@/lib/billing'
 import { prisma } from '@/lib/prisma'
 import { HelpTooltip } from '../_components/help-tooltip'
-import { cancelInvoiceAction, createInvoiceAction } from '../actions'
+import { cancelInvoiceAction, createInvoiceAction, issueInvoiceViaHutkoAction } from '../actions'
 import { type InvoiceStatus, type Prisma } from '@prisma/client'
 
 interface AdminInvoicesPageProps {
@@ -37,6 +37,27 @@ function statusBadgeClass(status: string): string {
   if (status === 'CANCELED' || status === 'VOID') return 'bg-gray-100 text-gray-700'
   if (status === 'OVERDUE') return 'bg-red-100 text-red-700'
   return 'bg-slate-100 text-slate-700'
+}
+
+function resolvePaymentUrl(metadata: Prisma.JsonValue | null): string | null {
+  if (!metadata || typeof metadata !== 'object' || Array.isArray(metadata)) {
+    return null
+  }
+
+  const objectMeta = metadata as Record<string, unknown>
+  if (typeof objectMeta.paymentUrl === 'string' && objectMeta.paymentUrl) {
+    return objectMeta.paymentUrl
+  }
+
+  const hutko = objectMeta.hutko
+  if (hutko && typeof hutko === 'object' && !Array.isArray(hutko)) {
+    const checkoutUrl = (hutko as Record<string, unknown>).checkoutUrl
+    if (typeof checkoutUrl === 'string' && checkoutUrl) {
+      return checkoutUrl
+    }
+  }
+
+  return null
 }
 
 export default async function AdminInvoicesPage({ searchParams }: AdminInvoicesPageProps) {
@@ -124,7 +145,7 @@ export default async function AdminInvoicesPage({ searchParams }: AdminInvoicesP
       <div className="rounded border border-gray-200 bg-white p-4">
         <div className="mb-3 flex items-center justify-between">
           <p className="text-sm font-semibold text-[#002d6e]">Новий рахунок</p>
-          <HelpTooltip text="Для річного циклу сума рахується як 10 місяців, а не 12." />
+          <HelpTooltip text="Для річного циклу сума береться з налаштувань конкретного плану (кількість оплачуваних місяців на рік)." />
         </div>
         <form action={createInvoiceAction} className="grid grid-cols-1 gap-3 md:grid-cols-2">
           <label className="text-sm text-gray-700">
@@ -144,7 +165,7 @@ export default async function AdminInvoicesPage({ searchParams }: AdminInvoicesP
             <select name="billingCycle" defaultValue="MONTHLY" className="mt-1 w-full rounded border border-gray-300 px-3 py-2">
               <option value="MONTHLY">Щомісяця</option>
               <option value="QUARTERLY">Щокварталу</option>
-              <option value="YEARLY">Щороку (10 міс.)</option>
+              <option value="YEARLY">Щороку</option>
             </select>
           </label>
 
@@ -261,6 +282,25 @@ export default async function AdminInvoicesPage({ searchParams }: AdminInvoicesP
                         Скасувати
                       </button>
                     </form>
+                    <form action={issueInvoiceViaHutkoAction}>
+                      <input type="hidden" name="invoiceId" value={invoice.id} />
+                      <button type="submit" className="rounded border border-emerald-300 px-2 py-1 text-xs text-emerald-700 hover:bg-emerald-50">
+                        Виставити в Hutko
+                      </button>
+                    </form>
+                    {resolvePaymentUrl(invoice.metadata) && (
+                      <a href={resolvePaymentUrl(invoice.metadata) ?? '#'} target="_blank" rel="noreferrer" className="rounded border border-emerald-500 px-2 py-1 text-xs text-emerald-700 hover:bg-emerald-50">
+                        Посилання на оплату
+                      </a>
+                    )}
+                    <a
+                      href={`/api/admin/invoices/${encodeURIComponent(invoice.id)}/pdf`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="rounded border border-slate-300 px-2 py-1 text-xs text-slate-700 hover:bg-slate-100"
+                    >
+                      PDF
+                    </a>
                     <a href={`/admin/payments?invoiceId=${encodeURIComponent(invoice.id)}`} className="rounded border border-[#0047AB]/30 px-2 py-1 text-xs text-[#0047AB] hover:bg-[#0047AB] hover:text-white">
                       Платежі
                     </a>
